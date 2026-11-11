@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const debug = require('debug')('development:db')
 
 const connectDb = async () => {
     try {
         await mongoose.connect(process.env.MONGO_DB_URI);
-        console.log("Mongo Db connected")
+        debug("Mongo Db connected")
     } catch (err) {
-        console.log(err)
+        debug(err)
         throw new err
     }
 }

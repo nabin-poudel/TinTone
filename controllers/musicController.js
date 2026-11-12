@@ -30,7 +30,7 @@ const createMusic = async (req, res) => {
 
         // Creating Music
         const music = await musicModel.create({
-            uri: result.uri,
+            uri: result.url,
             title: title,
             artist: decoded.id
         })

@@ -8,8 +8,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use('/api/auth', authRoute)
-app.use('/api/auth', authRoute)
-app.use('/api/music', musicRoute);
+// Auth Routes
+app.use('/api/auth', authRoute); // Register User
+app.use('/api/auth', authRoute); // Login User
+
+// Music Routes
+app.use('/api/music', musicRoute); // Music
+app.use('/api/album', musicRoute); // Album
 
 module.exports = app;

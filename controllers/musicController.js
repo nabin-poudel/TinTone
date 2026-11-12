@@ -1,38 +1,20 @@
 const musicModel = require('../models/musicModel');
-const jwt = require('jsonwebtoken');
 const { uploadMusicFile } = require('../services/storageService');
+const albumModel = require('../models/albumModel');
 const debug = require('debug')('development:musicController')
 
-// Creating Music
+// Music Creation Function
 const createMusic = async (req, res) => {
-    const token = req.cookies.token;
-
-    // Checking User
-    if(!token) {
-        return res.status(401).json({
-            message: "Unauthorized User Found"
-        })
-    }
-
-    // Decoding JWT role token
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        if(decoded.role !== "artist") {
-            return res.status(403).json({
-                message: "You don't have access to create music"
-            })
-        }
-
+        // Creating Music
         const { title } = req.body;
         const file = req.file;
         const result = await uploadMusicFile(file.buffer.toString("base64"));
 
-        // Creating Music
         const music = await musicModel.create({
             uri: result.url,
             title: title,
-            artist: decoded.id
+            artist: req.user.id
         })
 
         // Sending Response
@@ -49,6 +31,33 @@ const createMusic = async (req, res) => {
     } catch (err) {
         debug(err)
     }
-}
+};
 
-module.exports = { createMusic }
+// Creating Music Album
+const createAlbum = async (req, res) => {
+    try {
+        // Creating Album
+        const { title, musicIds } = req.body;
+        const album = await albumModel.create({
+            title,
+            belongingArtist: req.user.id,
+            musics: musicIds
+        })
+        
+        // Sending Response
+        res.status(201).json({
+            message: "Album Created successfully",
+            album: {
+                id: album._id,
+                title: album.title,
+                artist: album.artist,
+                musics: album.musics
+            }
+        })
+    } catch (err) {
+        debug(`Error ${err}`)
+        return res.status(401).json({ message: "Unauthorized" })
+    }
+};
+
+module.exports = { createMusic, createAlbum }

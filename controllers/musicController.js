@@ -82,13 +82,48 @@ const getAlbum = async (req, res) => {
 
 // Get Album By Id
 const getAlbumById = async (req, res) => {
-    const id = req.body.params
-    const album = await albumModel.findById(id).populate("belongingArtist", "username email");
+    const albumId = req.body.params
+    const album = await albumModel.findById(albumId).populate("belongingArtist", "username email");
 
     res.status(200).json({
-        message: `${id} Album fetched`,
+        message: `${albumId} Album fetched`,
         album
     })
 }
 
-module.exports = { createMusic, createAlbum, getMusics, getAlbum, getAlbumById }
+// Get Music By Id
+const getMusicById = async (req, res) => {
+    const musicId = req.params
+    const music = await musicModel.findById(musicId).populate("belongingArtist", "username email");
+
+    if(!music) return res.status(300).json({
+        message: "No Music Found",
+    })
+
+    res.status(200).json({
+        message: `${music} Music fetched`,
+        music
+    })
+};
+
+// Delete Music 
+const deleteMusic = async (req, res) => {
+    const musicId = req.params.musicId;
+    debug(musicId);
+
+    const music = await musicModel.findById(musicId);
+    if(!music) {
+        return res.status(404).json({
+            message: "Music Doesn't exist to delete",
+        })
+    }
+
+    const deletedMusic = await musicModel.findByIdAndDelete(musicId);
+
+    res.status(200).json({
+        message: "Music Deleted Successfully",
+        deletedMusic
+    })
+}
+
+module.exports = { createMusic, createAlbum, getMusics, getAlbum, getAlbumById, getMusicById, deleteMusic }

@@ -10,7 +10,6 @@ app.use(cookieParser());
 
 // Auth Routes
 app.use('/api/auth', authRoute); // Register User
-app.use('/api/auth', authRoute); // Login User
 
 // Music Routes
 app.use('/api/music', musicRoute); // Music

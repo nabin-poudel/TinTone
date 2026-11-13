@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const debug = require('debug')('development:authController.js')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -57,7 +58,7 @@ const loginUser = async (req, res) => {
             { email }
         ]
     });
-    if(user === null) return res.status(401).send("Something Went Wrong");
+    if(user === null) return res.status(401).send("Something Went Wrong (Null user)");
 
     // Checking password
     await bcrypt.compare(password, user.password, (err, result) => {
@@ -82,7 +83,7 @@ const loginUser = async (req, res) => {
         })
         
     });
-}
+};
 
 // Logout
 const logout = async (req, res) => {
@@ -91,6 +92,6 @@ const logout = async (req, res) => {
     res.status(200).json({
         message: "Logged Out Successfully"
     })
-}
+};
 
 module.exports = { registerUser, loginUser, logout };

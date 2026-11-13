@@ -16,7 +16,7 @@ const authArtist = async (req, res, next) => {
         // Checking JWT role token
         if(decoded.role !== "artist") {
             return res.status(403).json({
-                message: "You don't have access to create Album"
+                message: "You don't have access to do this activity"
             })
         }
 
@@ -27,7 +27,7 @@ const authArtist = async (req, res, next) => {
     } catch (err) {
         debug(err)
         res.status(403).json({
-            message: "You don't have access to create album (Catch Part)"
+            message: "You don't have access to do this activity"
         })
     }
 }

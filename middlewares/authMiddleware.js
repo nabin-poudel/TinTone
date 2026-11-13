@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const debug = require('debug')('development:authMiddleware')
 
-// Artist Authorization middleware
+// Artist Auth middleware
 const authArtist = async (req, res, next) => {
     const token = req.cookies.token;
 
@@ -32,4 +32,28 @@ const authArtist = async (req, res, next) => {
     }
 }
 
-module.exports = { authArtist }
+// Get Music + Album Auth
+const authUser = async (req, res, next) => {
+    const token = req.cookies.token;
+
+    if(!token) return res.status(403).json({ message: "Please Login First to Get Music (!token)" });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        if(decoded.role !== "user" && decoded.role !== "artist") {
+            return res.status(403).json({ message: "Please Login First To Get Music (Role miss match)" })
+        }
+
+        req.user = decoded
+
+        next();
+
+    } catch (err) {
+        debug(err)
+        return res.status(403).json({ message: "Please Login First to Get Music (err)" });
+    }
+
+}
+
+module.exports = { authArtist, authUser }
